@@ -1,0 +1,41 @@
+msgid "countdown_title"
+msgstr ">>> TARGET COUNTDOWN <<<"
+
+msgid "mission_code"
+msgstr "OPERATION COUNTDOWN"
+
+msgid "days"
+msgstr "DAYS"
+
+msgid "hours" 
+msgstr "HOURS"
+
+msgid "minutes"
+msgstr "MINS"
+
+msgid "seconds"
+msgstr "SECS"
+
+msgid "set_target"
+msgstr "[ SET TARGET ]"
+
+msgid "mission_active"
+msgstr "[STATUS: MISSION ACTIVE]"
+
+msgid "mission_critical"
+msgstr "[STATUS: CRITICAL TIME]"
+
+msgid "mission_warning"
+msgstr "[STATUS: WARNING ZONE]"
+
+msgid "mission_complete"
+msgstr "[STATUS: MISSION COMPLETE]"
+
+msgid "time_up"
+msgstr "MISSION ACCOMPLISHED"
+
+msgid "reset"
+msgstr "RESET"
+
+msgid "example"
+msgstr "This is an example in device"

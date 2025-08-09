@@ -1,0 +1,50 @@
+msgid "setting_title"
+msgstr ">>> TARGET PARAMETERS <<<"
+
+msgid "mission_config"
+msgstr "[MISSION CONFIGURATION MODE]"
+
+msgid "target_datetime"
+msgstr "TARGET DATE/TIME"
+
+msgid "quick_presets"
+msgstr "QUICK PRESETS:"
+
+msgid "deploy"
+msgstr "[ DEPLOY ]"
+
+msgid "abort"
+msgstr "ABORT"
+
+msgid "reset"
+msgstr "RESET"
+
+msgid "target_deployed"
+msgstr "[TARGET DEPLOYED]"
+
+msgid "plus_hour"
+msgstr "+1 HOUR"
+
+msgid "plus_day"
+msgstr "+1 DAY"
+
+msgid "plus_week"
+msgstr "+1 WEEK"
+
+msgid "new_year"
+msgstr "NEW YEAR"
+
+msgid "select_date"
+msgstr "Select Date"
+
+msgid "select_time"
+msgstr "Select Time"
+
+msgid "save_settings"
+msgstr "Save Settings"
+
+msgid "settings_saved"
+msgstr "Settings Saved!"
+
+msgid "example"
+msgstr "This is an example in app-side"

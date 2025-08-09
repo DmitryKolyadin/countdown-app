@@ -1,0 +1,17 @@
+{
+  "name": "countdown-app",
+  "version": "1.0.0",
+  "description": "Countdown timer app for Zepp OS",
+  "main": "app.js",
+  "scripts": {
+    "dev": "zeus dev",
+    "build": "zeus build",
+    "preview": "zeus preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@zeppos/device-types": "^3.0.0"
+  }
+}
