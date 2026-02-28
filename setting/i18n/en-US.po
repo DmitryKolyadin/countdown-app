@@ -1,50 +1,53 @@
-msgid "setting_title"
-msgstr ">>> TARGET PARAMETERS <<<"
+msgid "setTarget"
+msgstr "Set Target"
 
-msgid "mission_config"
-msgstr "[MISSION CONFIGURATION MODE]"
+msgid "eventName"
+msgstr "Event"
 
-msgid "target_datetime"
-msgstr "TARGET DATE/TIME"
+msgid "save"
+msgstr "SAVE"
 
-msgid "quick_presets"
-msgstr "QUICK PRESETS:"
+msgid "presets"
+msgstr "Quick Set"
 
-msgid "deploy"
-msgstr "[ DEPLOY ]"
+msgid "plusHour"
+msgstr "+1 Hour"
 
-msgid "abort"
-msgstr "ABORT"
+msgid "plusDay"
+msgstr "+1 Day"
 
-msgid "reset"
-msgstr "RESET"
+msgid "plusWeek"
+msgstr "+1 Week"
 
-msgid "target_deployed"
-msgstr "[TARGET DEPLOYED]"
+msgid "nextNewYear"
+msgstr "New Year"
 
-msgid "plus_hour"
-msgstr "+1 HOUR"
+msgid "countdown"
+msgstr "Countdown"
 
-msgid "plus_day"
-msgstr "+1 DAY"
+msgid "birthday"
+msgstr "Birthday"
 
-msgid "plus_week"
-msgstr "+1 WEEK"
+msgid "newYear"
+msgstr "New Year"
 
-msgid "new_year"
-msgstr "NEW YEAR"
+msgid "holiday"
+msgstr "Holiday"
 
-msgid "select_date"
-msgstr "Select Date"
+msgid "meeting"
+msgstr "Meeting"
 
-msgid "select_time"
-msgstr "Select Time"
+msgid "deadline"
+msgstr "Deadline"
 
-msgid "save_settings"
-msgstr "Save Settings"
+msgid "anniversary"
+msgstr "Anniversary"
 
-msgid "settings_saved"
-msgstr "Settings Saved!"
+msgid "trip"
+msgstr "Trip"
 
-msgid "example"
-msgstr "This is an example in app-side"
+msgid "exam"
+msgstr "Exam"
+
+msgid "wedding"
+msgstr "Wedding"

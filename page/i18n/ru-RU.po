@@ -1,0 +1,62 @@
+msgid "countdown"
+msgstr "Отсчёт"
+
+msgid "birthday"
+msgstr "День рождения"
+
+msgid "newYear"
+msgstr "Новый год"
+
+msgid "holiday"
+msgstr "Праздник"
+
+msgid "meeting"
+msgstr "Встреча"
+
+msgid "deadline"
+msgstr "Дедлайн"
+
+msgid "anniversary"
+msgstr "Юбилей"
+
+msgid "trip"
+msgstr "Поездка"
+
+msgid "exam"
+msgstr "Экзамен"
+
+msgid "wedding"
+msgstr "Свадьба"
+
+msgid "timeLeft"
+msgstr "Осталось"
+
+msgid "days"
+msgstr "ДНИ"
+
+msgid "hours"
+msgstr "ЧАС"
+
+msgid "mins"
+msgstr "МИН"
+
+msgid "secs"
+msgstr "СЕК"
+
+msgid "settings"
+msgstr "Настройки"
+
+msgid "almostThere"
+msgstr "Почти!"
+
+msgid "lessThanHour"
+msgstr "Менее 1 часа"
+
+msgid "daysRemaining"
+msgstr "дн. осталось"
+
+msgid "hoursRemaining"
+msgstr "ч. осталось"
+
+msgid "timesUp"
+msgstr "Время вышло!"
