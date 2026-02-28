@@ -1,41 +1,62 @@
-msgid "countdown_title"
-msgstr ">>> TARGET COUNTDOWN <<<"
+msgid "countdown"
+msgstr "Countdown"
 
-msgid "mission_code"
-msgstr "OPERATION COUNTDOWN"
+msgid "birthday"
+msgstr "Birthday"
+
+msgid "newYear"
+msgstr "New Year"
+
+msgid "holiday"
+msgstr "Holiday"
+
+msgid "meeting"
+msgstr "Meeting"
+
+msgid "deadline"
+msgstr "Deadline"
+
+msgid "anniversary"
+msgstr "Anniversary"
+
+msgid "trip"
+msgstr "Trip"
+
+msgid "exam"
+msgstr "Exam"
+
+msgid "wedding"
+msgstr "Wedding"
+
+msgid "timeLeft"
+msgstr "Time remaining"
 
 msgid "days"
 msgstr "DAYS"
 
-msgid "hours" 
-msgstr "HOURS"
+msgid "hours"
+msgstr "HRS"
 
-msgid "minutes"
-msgstr "MINS"
+msgid "mins"
+msgstr "MIN"
 
-msgid "seconds"
-msgstr "SECS"
+msgid "secs"
+msgstr "SEC"
 
-msgid "set_target"
-msgstr "[ SET TARGET ]"
+msgid "settings"
+msgstr "Settings"
 
-msgid "mission_active"
-msgstr "[STATUS: MISSION ACTIVE]"
+msgid "almostThere"
+msgstr "Almost there!"
 
-msgid "mission_critical"
-msgstr "[STATUS: CRITICAL TIME]"
+msgid "lessThanHour"
+msgstr "Less than 1 hour"
 
-msgid "mission_warning"
-msgstr "[STATUS: WARNING ZONE]"
+msgid "daysRemaining"
+msgstr "days left"
 
-msgid "mission_complete"
-msgstr "[STATUS: MISSION COMPLETE]"
+msgid "hoursRemaining"
+msgstr "hours left"
 
-msgid "time_up"
-msgstr "MISSION ACCOMPLISHED"
-
-msgid "reset"
-msgstr "RESET"
-
-msgid "example"
-msgstr "This is an example in device"
+msgid "timesUp"
+msgstr "Time's up!"

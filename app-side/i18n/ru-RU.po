@@ -1,0 +1,5 @@
+msgid "app_started"
+msgstr "CountdownApp запущен"
+
+msgid "app_destroyed"
+msgstr "CountdownApp завершён"

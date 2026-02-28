@@ -1,7 +1,7 @@
 {
   "name": "countdown-app",
-  "version": "1.0.0",
-  "description": "Countdown timer app for Zepp OS",
+  "version": "2.0.0",
+  "description": "Countdown timer for Zepp OS - track time to important events",
   "main": "app.js",
   "scripts": {
     "dev": "zeus dev",

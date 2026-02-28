@@ -5,12 +5,12 @@
     "appName": "CountdownApp",
     "appType": "app",
     "version": {
-      "code": 1,
-      "name": "1.0.0"
+      "code": 2,
+      "name": "2.0.0"
     },
     "icon": "icon.png",
     "vender": "zepp",
-    "description": "Countdown timer application"
+    "description": "Countdown timer - track time to your important events"
   },
   "permissions": ["zos.permission.READ_WRITE_DATA"],
   "runtime": {
@@ -31,16 +31,21 @@
         }
       },
       "platforms": [
-        {
-          "st": "r",
-          "dw": 480
-        }
+        { "st": "r", "dw": 480 },
+        { "st": "r", "dw": 466 },
+        { "st": "r", "dw": 454 },
+        { "st": "r", "dw": 416 },
+        { "st": "s", "dw": 390 },
+        { "st": "s", "dw": 336 }
       ]
     }
   },
   "i18n": {
     "en-US": {
-      "appName": "CountdownApp"
+      "appName": "Countdown Timer"
+    },
+    "ru-RU": {
+      "appName": "Таймер обратного отсчёта"
     }
   },
   "defaultLanguage": "en-US"

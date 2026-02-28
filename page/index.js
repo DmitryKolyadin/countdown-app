@@ -1,282 +1,227 @@
 import { getText } from '@zos/i18n'
-import { createWidget, widget, prop, align, text_style, event } from '@zos/ui'
-import { px } from '@zos/utils'
+import { createWidget, widget, prop, align, event } from '@zos/ui'
 import { push } from '@zos/router'
 import { readFileSync, statSync } from '@zos/fs'
+import { getDeviceInfo } from '@zos/device'
+import { showToast } from '@zos/interaction'
+
+const deviceInfo = getDeviceInfo()
+const W = deviceInfo.width
+const H = deviceInfo.height
 
 Page({
   state: {
     targetTimestamp: null,
+    eventName: '',
     intervalId: null,
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isCritical: false
+    isExpired: false
   },
 
   onInit() {
-    console.log('Spy Countdown Mission Initialized')
     this.loadSettings()
   },
 
   build() {
-    console.log('Building spy interface...')
-    
-    // Создаем простой интерфейс
-    this.createSimpleInterface()
-    
-    // Запускаем таймер
+    this.createInterface()
     this.startCountdown()
   },
 
   loadSettings() {
     try {
-      const filePath = 'countdown_target.json'
-      const { size } = statSync({ path: filePath })
-
+      const { size } = statSync({ path: 'countdown_target.json' })
       if (size > 0) {
-        const data = readFileSync({ path: filePath, options: { encoding: 'utf8' } })
+        const data = readFileSync({
+          path: 'countdown_target.json',
+          options: { encoding: 'utf8' }
+        })
         const settings = JSON.parse(data)
         if (settings && settings.target) {
           this.state.targetTimestamp = settings.target
-          console.log('Loaded target from file:', new Date(this.state.targetTimestamp).toString())
+          this.state.eventName = settings.eventKey
+            ? getText(settings.eventKey)
+            : getText('countdown')
           return
         }
       }
-    } catch (error) {
-      console.log('Settings file not found or invalid, using default.')
+    } catch (e) {
+      console.log('No settings found, using defaults')
     }
-
-    // Устанавливаем время по умолчанию, если загрузка не удалась
     this.setDefaultTarget()
   },
 
   setDefaultTarget() {
-    // Устанавливаем время через час для демонстрации
-    const futureTime = new Date()
-    futureTime.setHours(futureTime.getHours() + 1)
-    this.state.targetTimestamp = futureTime.getTime()
-    console.log('Target set to:', futureTime.toString())
+    const future = new Date()
+    future.setHours(future.getHours() + 1)
+    this.state.targetTimestamp = future.getTime()
+    this.state.eventName = getText('countdown')
   },
 
-  createSimpleInterface() {
-    try {
-      // Фон
-      createWidget(widget.FILL_RECT, {
-        x: 0,
-        y: 0,
-        w: 480,
-        h: 490,
-        color: 0x000000
-      })
+  createInterface() {
+    createWidget(widget.FILL_RECT, {
+      x: 0,
+      y: 0,
+      w: W,
+      h: H,
+      color: 0x000000
+    })
 
-      // Заголовок
-      createWidget(widget.TEXT, {
-        x: 0,
-        y: 60,
-        w: 480,
-        h: 50,
-        text: 'ОСТАЛОСЬ',
-        text_size: 36,
-        color: 0xffffff,
-        align_h: align.CENTER_H
-      })
+    this.eventWidget = createWidget(widget.TEXT, {
+      x: 0,
+      y: Math.floor(H * 0.10),
+      w: W,
+      h: Math.floor(H * 0.10),
+      text: this.state.eventName || getText('countdown'),
+      text_size: Math.floor(W * 0.065),
+      color: 0x00b4ff,
+      align_h: align.CENTER_H
+    })
 
-      // Статус
-      // this.statusWidget = createWidget(widget.TEXT, {
-      //   x: 0,
-      //   y: 120,
-      //   w: 480,
-      //   h: 30,
-      //   text: 'MISSION ACTIVE',
-      //   text_size: 20,
-      //   color: 0xffffff,
-      //   align_h: align.CENTER_H
-      // })
+    createWidget(widget.TEXT, {
+      x: 0,
+      y: Math.floor(H * 0.20),
+      w: W,
+      h: Math.floor(H * 0.06),
+      text: getText('timeLeft'),
+      text_size: Math.floor(W * 0.035),
+      color: 0x888888,
+      align_h: align.CENTER_H
+    })
 
-      const yPos = 155
-      const labelYPos = yPos + 100
-      const valueHeight = 90
-      const labelHeight = 30
-      const valueTextSize = 80
-      const labelTextSize = 18
-      const valueColor = 0xffffff
-      const labelColor = 0xaaaaaa
-      const componentWidth = 100
-      const separatorWidth = 20
-      const totalWidth = (componentWidth * 4) + (separatorWidth * 3)
-      const startX = (480 - totalWidth) / 2
+    const yPos = Math.floor(H * 0.30)
+    const valueH = Math.floor(H * 0.18)
+    const labelY = yPos + valueH - Math.floor(H * 0.02)
+    const labelH = Math.floor(H * 0.06)
+    const valFont = Math.floor(W * 0.15)
+    const lblFont = Math.floor(W * 0.032)
+    const compW = Math.floor(W * 0.19)
+    const sepW = Math.floor(W * 0.04)
+    const totalW = compW * 4 + sepW * 3
+    const startX = Math.floor((W - totalW) / 2)
 
-      // Дни
-      this.daysValue = createWidget(widget.TEXT, {
-        x: startX,
-        y: yPos,
-        w: componentWidth,
-        h: valueHeight,
-        text: '00',
-        text_size: valueTextSize,
-        color: valueColor,
-        align_h: align.CENTER_H
-      })
-      createWidget(widget.TEXT, {
-        x: startX,
-        y: labelYPos,
-        w: componentWidth,
-        h: labelHeight,
-        text: 'DAYS',
-        text_size: labelTextSize,
-        color: labelColor,
-        align_h: align.CENTER_H
-      })
+    this.daysValue = this.createTimeBlock(startX, yPos, compW, valueH, valFont, '00')
+    this.createLabel(startX, labelY, compW, labelH, lblFont, getText('days'))
 
-      // Разделитель
-      let currentX = startX + componentWidth
-      createWidget(widget.TEXT, {
-        x: currentX,
-        y: yPos - 10,
-        w: separatorWidth,
-        h: valueHeight,
-        text: ':',
-        text_size: valueTextSize,
-        color: labelColor,
-        align_h: align.CENTER_H
-      })
+    let cx = startX + compW
+    this.createSep(cx, yPos, sepW, valueH, valFont)
 
-      // Часы
-      currentX += separatorWidth
-      this.hoursValue = createWidget(widget.TEXT, {
-        x: currentX,
-        y: yPos,
-        w: componentWidth,
-        h: valueHeight,
-        text: '00',
-        text_size: valueTextSize,
-        color: valueColor,
-        align_h: align.CENTER_H
-      })
-      createWidget(widget.TEXT, {
-        x: currentX,
-        y: labelYPos,
-        w: componentWidth,
-        h: labelHeight,
-        text: 'HOURS',
-        text_size: labelTextSize,
-        color: labelColor,
-        align_h: align.CENTER_H
-      })
+    cx += sepW
+    this.hoursValue = this.createTimeBlock(cx, yPos, compW, valueH, valFont, '00')
+    this.createLabel(cx, labelY, compW, labelH, lblFont, getText('hours'))
 
-      // Разделитель
-      currentX += componentWidth
-      createWidget(widget.TEXT, {
-        x: currentX,
-        y: yPos - 10,
-        w: separatorWidth,
-        h: valueHeight,
-        text: ':',
-        text_size: valueTextSize,
-        color: labelColor,
-        align_h: align.CENTER_H
-      })
+    cx += compW
+    this.createSep(cx, yPos, sepW, valueH, valFont)
 
-      // Минуты
-      currentX += separatorWidth
-      this.minutesValue = createWidget(widget.TEXT, {
-        x: currentX,
-        y: yPos,
-        w: componentWidth,
-        h: valueHeight,
-        text: '00',
-        text_size: valueTextSize,
-        color: valueColor,
-        align_h: align.CENTER_H
-      })
-      createWidget(widget.TEXT, {
-        x: currentX,
-        y: labelYPos,
-        w: componentWidth,
-        h: labelHeight,
-        text: 'MINS',
-        text_size: labelTextSize,
-        color: labelColor,
-        align_h: align.CENTER_H
-      })
+    cx += sepW
+    this.minutesValue = this.createTimeBlock(cx, yPos, compW, valueH, valFont, '00')
+    this.createLabel(cx, labelY, compW, labelH, lblFont, getText('mins'))
 
-      // Разделитель
-      currentX += componentWidth
-      createWidget(widget.TEXT, {
-        x: currentX,
-        y: yPos - 10,
-        w: separatorWidth,
-        h: valueHeight,
-        text: ':',
-        text_size: valueTextSize,
-        color: labelColor,
-        align_h: align.CENTER_H
-      })
+    cx += compW
+    this.createSep(cx, yPos, sepW, valueH, valFont)
 
-      // Секунды
-      currentX += separatorWidth
-      this.secondsValue = createWidget(widget.TEXT, {
-        x: currentX,
-        y: yPos,
-        w: componentWidth,
-        h: valueHeight,
-        text: '00',
-        text_size: valueTextSize,
-        color: valueColor,
-        align_h: align.CENTER_H
-      })
-      createWidget(widget.TEXT, {
-        x: currentX,
-        y: labelYPos,
-        w: componentWidth,
-        h: labelHeight,
-        text: 'SECS',
-        text_size: labelTextSize,
-        color: labelColor,
-        align_h: align.CENTER_H
-      })
+    cx += sepW
+    this.secondsValue = this.createTimeBlock(cx, yPos, compW, valueH, valFont, '00')
+    this.createLabel(cx, labelY, compW, labelH, lblFont, getText('secs'))
 
-      // Кнопка настройки цели
-      const targetBtn = createWidget(widget.BUTTON, {
-        x: (480 - 220) / 2,
-        y: 400,
-        w: 220,
-        h: 55,
-        text: 'SET TARGET',
-        normal_color: 0x1c1c1e,
-        press_color: 0x333333,
-        color: 0xffffff,
-        text_size: 22,
-        radius: 28
-      })
+    this.statusWidget = createWidget(widget.TEXT, {
+      x: 0,
+      y: Math.floor(H * 0.58),
+      w: W,
+      h: Math.floor(H * 0.08),
+      text: '',
+      text_size: Math.floor(W * 0.04),
+      color: 0x00cc66,
+      align_h: align.CENTER_H
+    })
 
-      targetBtn.addEventListener(event.CLICK_UP, () => {
-        console.log('Opening settings...')
-        push({ url: 'setting/index' })
-      })
+    this.targetDateWidget = createWidget(widget.TEXT, {
+      x: 0,
+      y: Math.floor(H * 0.66),
+      w: W,
+      h: Math.floor(H * 0.06),
+      text: this.formatTargetDate(),
+      text_size: Math.floor(W * 0.030),
+      color: 0x666666,
+      align_h: align.CENTER_H
+    })
 
-      console.log('Interface created successfully')
+    const btnW = Math.floor(W * 0.46)
+    const btnH = Math.floor(H * 0.11)
+    const settingsBtn = createWidget(widget.BUTTON, {
+      x: Math.floor((W - btnW) / 2),
+      y: Math.floor(H * 0.80),
+      w: btnW,
+      h: btnH,
+      text: getText('settings'),
+      normal_color: 0x1c1c1e,
+      press_color: 0x333333,
+      color: 0xffffff,
+      text_size: Math.floor(W * 0.045),
+      radius: Math.floor(btnH / 2)
+    })
 
-    } catch (error) {
-      console.error('Error creating interface:', error)
-    }
+    settingsBtn.addEventListener(event.CLICK_UP, () => {
+      push({ url: 'setting/index' })
+    })
+  },
+
+  createTimeBlock(x, y, w, h, fontSize, text) {
+    return createWidget(widget.TEXT, {
+      x: x,
+      y: y,
+      w: w,
+      h: h,
+      text: text,
+      text_size: fontSize,
+      color: 0xffffff,
+      align_h: align.CENTER_H
+    })
+  },
+
+  createLabel(x, y, w, h, fontSize, text) {
+    createWidget(widget.TEXT, {
+      x: x,
+      y: y,
+      w: w,
+      h: h,
+      text: text,
+      text_size: fontSize,
+      color: 0x888888,
+      align_h: align.CENTER_H
+    })
+  },
+
+  createSep(x, y, w, h, fontSize) {
+    createWidget(widget.TEXT, {
+      x: x,
+      y: y - Math.floor(h * 0.05),
+      w: w,
+      h: h,
+      text: ':',
+      text_size: fontSize,
+      color: 0x444444,
+      align_h: align.CENTER_H
+    })
+  },
+
+  formatTargetDate() {
+    if (!this.state.targetTimestamp) return ''
+    const d = new Date(this.state.targetTimestamp)
+    const dd = d.getDate().toString().padStart(2, '0')
+    const mm = (d.getMonth() + 1).toString().padStart(2, '0')
+    const yyyy = d.getFullYear()
+    const hh = d.getHours().toString().padStart(2, '0')
+    const min = d.getMinutes().toString().padStart(2, '0')
+    return dd + '.' + mm + '.' + yyyy + '  ' + hh + ':' + min
   },
 
   startCountdown() {
-    console.log('Starting countdown...')
-    
     if (this.state.intervalId) {
       clearInterval(this.state.intervalId)
     }
-
+    this.updateCountdown()
     this.state.intervalId = setInterval(() => {
       this.updateCountdown()
     }, 1000)
-
-    // Сразу обновляем при запуске
-    this.updateCountdown()
   },
 
   updateCountdown() {
@@ -285,93 +230,109 @@ Page({
       return
     }
 
-    const now = Date.now()
-    const diff = this.state.targetTimestamp - now
+    const diff = this.state.targetTimestamp - Date.now()
 
     if (diff <= 0) {
       this.setTime(0, 0, 0, 0)
-      this.missionComplete()
+      this.onExpired()
       return
     }
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+    const days = Math.floor(diff / 86400000)
+    const hours = Math.floor((diff % 86400000) / 3600000)
+    const minutes = Math.floor((diff % 3600000) / 60000)
+    const seconds = Math.floor((diff % 60000) / 1000)
 
     this.setTime(days, hours, minutes, seconds)
-    this.updateMissionStatus(diff)
+    this.updateStatus(diff)
   },
 
-  setTime(days, hours, minutes, seconds) {
+  setTime(d, h, m, s) {
     try {
-      if (this.daysValue) {
-        this.daysValue.setProperty(prop.TEXT, days.toString().padStart(2, '0'))
-      }
-      if (this.hoursValue) {
-        this.hoursValue.setProperty(prop.TEXT, hours.toString().padStart(2, '0'))
-      }
-      if (this.minutesValue) {
-        this.minutesValue.setProperty(prop.TEXT, minutes.toString().padStart(2, '0'))
-      }
-      if (this.secondsValue) {
-        this.secondsValue.setProperty(prop.TEXT, seconds.toString().padStart(2, '0'))
-      }
-    } catch (error) {
-      console.error('Error updating time:', error)
+      if (this.daysValue) this.daysValue.setProperty(prop.TEXT, d.toString().padStart(2, '0'))
+      if (this.hoursValue) this.hoursValue.setProperty(prop.TEXT, h.toString().padStart(2, '0'))
+      if (this.minutesValue) this.minutesValue.setProperty(prop.TEXT, m.toString().padStart(2, '0'))
+      if (this.secondsValue) this.secondsValue.setProperty(prop.TEXT, s.toString().padStart(2, '0'))
+    } catch (e) {
+      console.log('Error updating time:', e)
     }
   },
 
-  updateMissionStatus(timeDiff) {
-    const totalMinutes = Math.floor(timeDiff / (1000 * 60))
-    
+  updateStatus(diff) {
+    const mins = Math.floor(diff / 60000)
+    const hours = Math.floor(diff / 3600000)
+    const days = Math.floor(diff / 86400000)
+
     try {
-      if (totalMinutes <= 5 && totalMinutes > 0) {
-        this.state.isCritical = true
+      if (mins <= 5) {
+        const c = { color: 0xff3b30 }
+        if (this.daysValue) this.daysValue.setProperty(prop.MORE, c)
+        if (this.hoursValue) this.hoursValue.setProperty(prop.MORE, c)
+        if (this.minutesValue) this.minutesValue.setProperty(prop.MORE, c)
+        if (this.secondsValue) this.secondsValue.setProperty(prop.MORE, c)
         if (this.statusWidget) {
-          this.statusWidget.setProperty(prop.TEXT, 'CRITICAL TIME')
-          this.statusWidget.setProperty(prop.MORE, { color: 0xff0000 })
+          this.statusWidget.setProperty(prop.TEXT, getText('almostThere'))
+          this.statusWidget.setProperty(prop.MORE, { color: 0xff3b30 })
         }
-        
-        // Меняем цвет всех значений на красный
-        const criticalColor = { color: 0xff0000 }
-        if (this.daysValue) this.daysValue.setProperty(prop.MORE, criticalColor)
-        if (this.hoursValue) this.hoursValue.setProperty(prop.MORE, criticalColor)
-        if (this.minutesValue) this.minutesValue.setProperty(prop.MORE, criticalColor)
-        if (this.secondsValue) this.secondsValue.setProperty(prop.MORE, criticalColor)
-        
-      } else if (this.state.isCritical) { // Сбрасываем, если время больше не критическое
-        this.state.isCritical = false
+      } else if (hours < 1) {
+        const c = { color: 0xff9500 }
+        if (this.daysValue) this.daysValue.setProperty(prop.MORE, c)
+        if (this.hoursValue) this.hoursValue.setProperty(prop.MORE, c)
+        if (this.minutesValue) this.minutesValue.setProperty(prop.MORE, c)
+        if (this.secondsValue) this.secondsValue.setProperty(prop.MORE, c)
         if (this.statusWidget) {
-          this.statusWidget.setProperty(prop.TEXT, 'MISSION ACTIVE')
-          this.statusWidget.setProperty(prop.MORE, { color: 0xffffff })
+          this.statusWidget.setProperty(prop.TEXT, getText('lessThanHour'))
+          this.statusWidget.setProperty(prop.MORE, { color: 0xff9500 })
         }
-        const normalColor = { color: 0xffffff }
-        if (this.daysValue) this.daysValue.setProperty(prop.MORE, normalColor)
-        if (this.hoursValue) this.hoursValue.setProperty(prop.MORE, normalColor)
-        if (this.minutesValue) this.minutesValue.setProperty(prop.MORE, normalColor)
-        if (this.secondsValue) this.secondsValue.setProperty(prop.MORE, normalColor)
+      } else {
+        const c = { color: 0xffffff }
+        if (this.daysValue) this.daysValue.setProperty(prop.MORE, c)
+        if (this.hoursValue) this.hoursValue.setProperty(prop.MORE, c)
+        if (this.minutesValue) this.minutesValue.setProperty(prop.MORE, c)
+        if (this.secondsValue) this.secondsValue.setProperty(prop.MORE, c)
+        if (this.statusWidget) {
+          if (days > 0) {
+            this.statusWidget.setProperty(prop.TEXT, days + ' ' + getText('daysRemaining'))
+          } else {
+            this.statusWidget.setProperty(prop.TEXT, hours + ' ' + getText('hoursRemaining'))
+          }
+          this.statusWidget.setProperty(prop.MORE, { color: 0x00cc66 })
+        }
       }
-    } catch (error) {
-      console.error('Error updating status:', error)
+    } catch (e) {
+      console.log('Error updating status:', e)
     }
   },
 
-  missionComplete() {
+  onExpired() {
+    if (this.state.isExpired) return
+    this.state.isExpired = true
+
     try {
-      this.state.isCritical = false
+      const c = { color: 0x00b4ff }
+      if (this.daysValue) this.daysValue.setProperty(prop.MORE, c)
+      if (this.hoursValue) this.hoursValue.setProperty(prop.MORE, c)
+      if (this.minutesValue) this.minutesValue.setProperty(prop.MORE, c)
+      if (this.secondsValue) this.secondsValue.setProperty(prop.MORE, c)
       if (this.statusWidget) {
-        this.statusWidget.setProperty(prop.TEXT, 'MISSION COMPLETE')
-        this.statusWidget.setProperty(prop.MORE, { color: 0x00ffff })
+        this.statusWidget.setProperty(prop.TEXT, getText('timesUp'))
+        this.statusWidget.setProperty(prop.MORE, { color: 0x00b4ff })
       }
-      console.log('Mission Complete!')
-    } catch (error) {
-      console.error('Error in mission complete:', error)
+      if (this.eventWidget) {
+        this.eventWidget.setProperty(prop.MORE, { color: 0x00b4ff })
+      }
+    } catch (e) {
+      console.log('Error updating expired state:', e)
+    }
+
+    try {
+      showToast({ content: getText('timesUp') })
+    } catch (e) {
+      console.log('Toast notification unavailable')
     }
   },
 
   onDestroy() {
-    console.log('Destroying countdown page')
     if (this.state.intervalId) {
       clearInterval(this.state.intervalId)
     }

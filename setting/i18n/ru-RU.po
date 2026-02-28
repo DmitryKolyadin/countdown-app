@@ -1,0 +1,53 @@
+msgid "setTarget"
+msgstr "Установить цель"
+
+msgid "eventName"
+msgstr "Событие"
+
+msgid "save"
+msgstr "СОХРАНИТЬ"
+
+msgid "presets"
+msgstr "Быстрый выбор"
+
+msgid "plusHour"
+msgstr "+1 Час"
+
+msgid "plusDay"
+msgstr "+1 День"
+
+msgid "plusWeek"
+msgstr "+1 Неделя"
+
+msgid "nextNewYear"
+msgstr "Новый год"
+
+msgid "countdown"
+msgstr "Отсчёт"
+
+msgid "birthday"
+msgstr "День рождения"
+
+msgid "newYear"
+msgstr "Новый год"
+
+msgid "holiday"
+msgstr "Праздник"
+
+msgid "meeting"
+msgstr "Встреча"
+
+msgid "deadline"
+msgstr "Дедлайн"
+
+msgid "anniversary"
+msgstr "Юбилей"
+
+msgid "trip"
+msgstr "Поездка"
+
+msgid "exam"
+msgstr "Экзамен"
+
+msgid "wedding"
+msgstr "Свадьба"
